@@ -1,0 +1,278 @@
+# domain.yaml: every knitting constant used by knitcalc.
+# Rules:
+#   - Code never hard-codes a number; it reads it from here.
+#   - Every block has `source:` and `note:`.
+#   - Anything not from a published table has `approximation: true` and `calibrate:`.
+# Loaded and validated by knitcalc/domain.py (pydantic) at import time.
+
+version: 1
+
+sources:
+  cyc_weights:
+    title: Craft Yarn Council, Standard Yarn Weight System
+    url: https://www.craftyarncouncil.com/standards/yarn-weight-system
+    checked: 2026-09-17
+  cyc_needles:
+    title: Craft Yarn Council, Knitting Needle and Crochet Hook Sizes
+    url: https://www.craftyarncouncil.com/standards/hooks-and-needles
+    checked: 2026-09-17
+  vogue_needles:
+    title: Vogue Knitting, Knitting Needle Conversion Chart (metric / US / UK)
+    url: https://www.vogueknitting.com/pattern-help/how-to/techniques-abbreviations/knitting-needles/
+    checked: 2026-09-17
+  internal:
+    title: Project estimate, see DECISIONS.md section 3
+    url: null
+    checked: 2026-09-17
+
+units:
+  cm_per_inch: 2.54
+  gauge_width_cm: 10          # gauge is always "stitches per 10 cm" (CYC uses 4 in, treated as equal)
+  source: "International yard and pound agreement (1959): 1 in = 2.54 cm exactly. CYC gauge is per 4 in."
+  note: "4 in = 10.16 cm. We treat it as 10 cm, like CYC and most patterns do. The 1.6% gap is below gauge measuring error."
+  gauge_width_in: 4           # CYC states gauge per 4 in; the guard accepts either wording
+
+# Input sanity limits: questions outside these are declined, not calculated.
+limits:
+  max_dimension_cm: 500       # a king-size blanket is ~275 cm; 500 leaves room for runners/wraps
+  min_gauge_sts_10cm: 1
+  max_gauge_sts_10cm: 60      # finer than lace weight (40) with room for tight lace work
+  source: internal
+  note: "ASSUMPTION: guard rails against typos (e.g. 5000 sts or 99999999 cm), not knitting limits."
+
+# ---------------------------------------------------------------------------
+# Yarn weights (CYC 0–7)
+# gauge_sts_10cm and needle_mm: CYC table, verbatim.
+# typical_gauge: midpoint of the CYC range (used when the user gives no gauge).
+# m_per_100cm2 and the ball size: APPROXIMATIONS.
+# ---------------------------------------------------------------------------
+weights:
+  - key: lace
+    cyc: 0
+    name: Lace
+    aliases: [lace, cobweb, "crochet thread", "10-count crochet thread"]
+    gauge_sts_10cm: [33, 40]
+    typical_gauge: 36.5
+    needle_mm: [1.5, 2.25]
+    us_needle: ["000", "1"]
+    m_per_100cm2: 22
+    ball: {grams: 50, metres: 400}
+    source: cyc_weights
+    note: "CYC lists 'Fingering, 10-count crochet thread' as lace-category yarn types. CYC footnote says lace is often knit on larger needles for openwork."
+    approximation: true            # applies to m_per_100cm2 and ball
+    calibrate: "Lace yardage varies a lot. Compare with 3 published lace-weight stockinette patterns (see DECISIONS.md calibration table)."
+
+  - key: super_fine
+    cyc: 1
+    name: Super Fine
+    aliases: [super fine, superfine, fingering, sock, "4ply", "4 ply", baby]
+    gauge_sts_10cm: [27, 32]
+    typical_gauge: 29.5
+    needle_mm: [2.25, 3.25]
+    us_needle: ["1", "3"]
+    m_per_100cm2: 20
+    ball: {grams: 100, metres: 400}
+    source: cyc_weights
+    note: "Socks are usually knit tighter than the CYC gauge; users should give their gauge. 'baby' is ambiguous (CYC lists it under 1 and 2); we map it to 1."
+    approximation: true
+    calibrate: "Compare with 3 published fingering-weight patterns; typical sock ball is 100 g / ~400 m."
+
+  - key: fine
+    cyc: 2
+    name: Fine
+    aliases: [fine, sport]
+    gauge_sts_10cm: [23, 26]
+    typical_gauge: 24.5
+    needle_mm: [3.25, 3.75]
+    us_needle: ["3", "5"]
+    m_per_100cm2: 16
+    ball: {grams: 50, metres: 150}
+    source: cyc_weights
+    note: "Sport weight."
+    approximation: true
+    calibrate: "Compare with 3 published sport-weight patterns."
+
+  - key: light
+    cyc: 3
+    name: Light
+    aliases: [light, dk, "double knit", "double knitting", "light worsted", "8ply", "8 ply"]
+    gauge_sts_10cm: [21, 24]
+    typical_gauge: 22.5
+    needle_mm: [3.75, 4.5]
+    us_needle: ["5", "7"]
+    m_per_100cm2: 13
+    ball: {grams: 50, metres: 120}
+    source: cyc_weights
+    note: "DK. Many 100 g / 250 m DK balls exist; the user's real ball size should replace this default."
+    approximation: true
+    calibrate: "Compare with 3 published DK stockinette patterns (e.g. a baby blanket with stated size and yardage)."
+
+  - key: medium
+    cyc: 4
+    name: Medium
+    aliases: [medium, worsted, aran, afghan, "10ply", "10 ply"]
+    gauge_sts_10cm: [16, 20]
+    typical_gauge: 18
+    needle_mm: [4.5, 5.5]
+    us_needle: ["7", "9"]
+    m_per_100cm2: 11
+    ball: {grams: 100, metres: 200}
+    source: cyc_weights
+    note: "Aran is often a little heavier than worsted; CYC puts both in category 4."
+    approximation: true
+    calibrate: "Compare with 3 published worsted scarf or blanket patterns."
+
+  - key: bulky
+    cyc: 5
+    name: Bulky
+    aliases: [bulky, chunky, craft, rug, "12ply", "12 ply"]
+    gauge_sts_10cm: [12, 15]
+    typical_gauge: 13.5
+    needle_mm: [5.5, 8.0]
+    us_needle: ["9", "11"]
+    m_per_100cm2: 9
+    ball: {grams: 100, metres: 100}
+    source: cyc_weights
+    note: "Chunky."
+    approximation: true
+    calibrate: "Compare with 3 published chunky patterns."
+
+  - key: super_bulky
+    cyc: 6
+    name: Super Bulky
+    aliases: [super bulky, "super chunky", roving]
+    gauge_sts_10cm: [7, 11]
+    typical_gauge: 9
+    needle_mm: [8.0, 12.75]
+    us_needle: ["11", "17"]
+    m_per_100cm2: 7
+    ball: {grams: 100, metres: 70}
+    source: cyc_weights
+    note: "CYC lists 'roving' under both 6 and 7; the alias maps to 6 (the more common one)."
+    approximation: true
+    calibrate: "Compare with 3 published super-chunky patterns."
+
+  - key: jumbo
+    cyc: 7
+    name: Jumbo
+    aliases: [jumbo]
+    gauge_sts_10cm: [3, 6]
+    typical_gauge: 5
+    needle_mm: [12.75, 25.0]
+    us_needle: ["17", "50"]
+    m_per_100cm2: 5
+    ball: {grams: 200, metres: 60}
+    source: cyc_weights
+    note: >-
+      ASSUMPTION: CYC gives only open bounds ('6 sts and fewer', '12.75 mm and larger', 'US 17 and larger').
+      We close them at 3 sts and 25 mm (the largest CYC needle with a US size) so the recommender has a range.
+    approximation: true
+    calibrate: "Jumbo yarns vary a lot; always prefer the ball label."
+
+# ---------------------------------------------------------------------------
+# Needle conversion. mm and US: CYC. UK (old UK/Canadian): Vogue Knitting.
+# null = that system has no size here; the recommender returns the nearest one and flags "approx".
+# ---------------------------------------------------------------------------
+needles:
+  source: [cyc_needles, vogue_needles]
+  note: >-
+    CYC has no UK column, so UK sizes come from Vogue Knitting. Vogue matches CYC on every shared row except US 17
+    (Vogue 12 mm, CYC 12.5/12.75 mm) and US 19 (Vogue 16 mm, CYC 15 mm). We follow CYC because the weight table
+    uses 12.75 mm. CYC also lists 3.125, 4.25, 5.25 and 5.75 mm; we leave them out as uncommon duplicates of a US size.
+  rows:
+    - {mm: 1.5,   us: "000", uk: null}
+    - {mm: 1.75,  us: "00",  uk: null}
+    - {mm: 2.0,   us: "0",   uk: "14"}
+    - {mm: 2.25,  us: "1",   uk: "13"}
+    - {mm: 2.75,  us: "2",   uk: "12"}
+    - {mm: 3.0,   us: null,  uk: "11"}
+    - {mm: 3.25,  us: "3",   uk: "10"}
+    - {mm: 3.5,   us: "4",   uk: null}
+    - {mm: 3.75,  us: "5",   uk: "9"}
+    - {mm: 4.0,   us: "6",   uk: "8"}
+    - {mm: 4.5,   us: "7",   uk: "7"}
+    - {mm: 5.0,   us: "8",   uk: "6"}
+    - {mm: 5.5,   us: "9",   uk: "5"}
+    - {mm: 6.0,   us: "10",  uk: "4"}
+    - {mm: 6.5,   us: "10.5", uk: "3"}
+    - {mm: 7.0,   us: null,  uk: "2"}
+    - {mm: 7.5,   us: null,  uk: "1"}
+    - {mm: 8.0,   us: "11",  uk: "0"}
+    - {mm: 9.0,   us: "13",  uk: "00"}
+    - {mm: 10.0,  us: "15",  uk: "000"}
+    - {mm: 12.75, us: "17",  uk: null}
+    - {mm: 15.0,  us: "19",  uk: null}
+    - {mm: 19.0,  us: "35",  uk: null}
+    - {mm: 25.0,  us: "50",  uk: null}
+
+# ---------------------------------------------------------------------------
+# Stitch pattern multipliers (yarn used vs stockinette of the same size). APPROXIMATION.
+# ---------------------------------------------------------------------------
+stitches:
+  source: internal
+  approximation: true
+  calibrate: "Knit or find 3 published patterns per stitch with stated size and yardage; adjust the multiplier; record the error in DECISIONS.md."
+  note: "Common knitting advice; no single published table. Ranges show how uncertain each value is."
+  items:
+    - {key: stockinette, aliases: [stockinette, stocking stitch, "st st", stockinet], multiplier: 1.00, range: [1.00, 1.00], note: "baseline"}
+    - {key: garter,      aliases: [garter, "garter stitch"],                        multiplier: 1.10, range: [1.05, 1.15], note: "rows compress; often quoted as ~10% more yarn"}
+    - {key: seed,        aliases: [seed, moss, "seed stitch", "moss stitch"],       multiplier: 1.10, range: [1.05, 1.15], note: "textured, slightly denser"}
+    - {key: rib_1x1,     aliases: ["1x1 rib", "rib 1x1", "k1p1 rib", rib, ribbing], multiplier: 1.20, range: [1.15, 1.25], note: "fabric pulls in, so more yarn per finished cm. ASSUMPTION: plain 'rib' means 1x1"}
+    - {key: rib_2x2,     aliases: ["2x2 rib", "rib 2x2", "k2p2 rib"],               multiplier: 1.15, range: [1.10, 1.20], note: "pulls in less than 1x1"}
+    - {key: cable,       aliases: [cable, cables, cabled],                          multiplier: 1.35, range: [1.30, 1.50], note: "crossings use extra yarn; depends on how dense the cables are"}
+    - {key: lace,        aliases: [lace, eyelet, openwork],                         multiplier: 0.85, range: [0.80, 0.90], note: "open eyelets use less yarn"}
+
+yarn_quantity:
+  safety_margin: 0.10
+  source: internal
+  approximation: true
+  note: "Common advice is to buy 10–15% extra for swatching, mistakes and dye lots. We use the low end and round balls up."
+  calibrate: "Raise to 0.15 if calibration shows we under-estimate."
+
+# ---------------------------------------------------------------------------
+# Needle recommender. APPROXIMATION (a heuristic inside the CYC range).
+# ---------------------------------------------------------------------------
+needle_recommender:
+  source: internal
+  approximation: true
+  note: "Within the CYC range for the weight: firm fabric uses the smaller end, drapey the larger. The project type nudges the result, then we snap to the nearest table row."
+  calibrate: "Compare with the needle sizes on 3 published patterns per project type."
+  fabric:
+    # position inside the CYC needle range: 0 = min, 1 = max
+    firm: 0.15
+    balanced: 0.50
+    drapey: 0.85
+  default_fabric: balanced
+  projects:
+    - {key: socks,   aliases: [sock, socks],             nudge_mm: -0.25, note: "sturdy fabric for wear"}
+    - {key: mittens, aliases: [mitten, mittens, gloves], nudge_mm: -0.25, note: "firm fabric for warmth"}
+    - {key: hat,     aliases: [hat, beanie],             nudge_mm: 0.0,   note: "no change"}
+    - {key: sweater, aliases: [sweater, jumper, cardigan, pullover], nudge_mm: 0.0, note: "no change"}
+    - {key: scarf,   aliases: [scarf, cowl],             nudge_mm: 0.0,   note: "no change"}
+    - {key: blanket, aliases: [blanket, afghan throw, throw], nudge_mm: 0.0, note: "no change"}
+    - {key: shawl,   aliases: [shawl, wrap, stole],      nudge_mm: 0.25,  note: "more drape for openwork"}
+  default_project: scarf
+
+# ---------------------------------------------------------------------------
+# Tension troubleshooter. APPROXIMATION.
+# ---------------------------------------------------------------------------
+tension:
+  source: internal
+  approximation: true
+  note: "Rule of thumb: one needle size (about 0.25–0.5 mm) changes gauge by about 1 stitch per 10 cm. More stitches than the pattern means you knit too tight, so go up a size."
+  calibrate: "Knit a swatch on 3 neighbouring needle sizes and record the stitch count for each."
+  mm_per_stitch: 0.25
+  sts_per_needle_size:
+    value: 1
+    source: internal
+    note: "Stitches per 10 cm that one needle size changes the gauge by. Pairs with mm_per_stitch: it is the stitch side of the same rule of thumb, and is what the reply means by 'about one stitch per 10cm'. ASSUMPTION: approximation; calibrate with the 3-swatch procedure above."
+  severity:            # |diff| / target
+    minor_below: 0.05
+    moderate_below: 0.10   # anything at or above this is "major"
+  substitution_above: 0.15 # above this, also suggest a different yarn
+  fixes:
+    - change_needle_size
+    - check_needle_material
+    - reswatch_after_blocking
+    - relax_tension_habits
+    - consider_yarn_substitution

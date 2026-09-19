@@ -1,0 +1,22 @@
+{
+  "created": "2026-09-17T15:37:18+00:00",
+  "delta_e": 9.85,
+  "delta_e_raw": 9.85,
+  "generation_ms": 10445.7,
+  "inputs": {
+    "colour_hex": "#5B3E96",
+    "colour_name": "royal purple",
+    "fibre_content": "100% wool",
+    "stitch_type": "cable",
+    "weight_category": "medium"
+  },
+  "model": "gpt-image-1-mini",
+  "prompt": "A close-up of cable knit fabric with thick twisted rope-like braids, plaited columns crossing over each other with deep shadows, raised 3D relief against a flat purl background. The yarn colour is exactly #5B3E96, RGB(91, 62, 150), a medium muted purple colour, evenly dyed, solid single colour. The swatch is made with worsted-weight yarn, medium-sized clearly defined stitches, wool yarn with visible ply twist and a slight matte fuzz. Top-down macro photograph of a flat 10 by 10 centimetre hand-knitted swatch filling the entire frame, even soft studio lighting, sharp focus, photorealistic, no hands, no needles, no text, no border, no other colours.",
+  "provider": "openai",
+  "quality": "low",
+  "tinted": false,
+  "usage": {
+    "input_tokens": 162,
+    "output_tokens": 272
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "created": "2026-09-17T15:38:05+00:00",
+  "delta_e": 7.62,
+  "delta_e_raw": 7.62,
+  "generation_ms": 16643.1,
+  "inputs": {
+    "colour_hex": "#5B3E96",
+    "colour_name": "royal purple",
+    "fibre_content": "100% wool",
+    "stitch_type": "rib_1x1",
+    "weight_category": "medium"
+  },
+  "model": "gpt-image-1-mini",
+  "prompt": "A close-up of 1x1 ribbed knit fabric with strong vertical corrugated columns: narrow raised ribs alternating with narrow recessed channels, one stitch wide, deep vertical grooves. The yarn colour is exactly #5B3E96, RGB(91, 62, 150), a medium muted purple colour, evenly dyed, solid single colour. The swatch is made with worsted-weight yarn, medium-sized clearly defined stitches, wool yarn with visible ply twist and a slight matte fuzz. Top-down macro photograph of a flat 10 by 10 centimetre hand-knitted swatch filling the entire frame, even soft studio lighting, sharp focus, photorealistic, no hands, no needles, no text, no border, no other colours.",
+  "provider": "openai",
+  "quality": "low",
+  "tinted": false,
+  "usage": {
+    "input_tokens": 159,
+    "output_tokens": 272
+  }
+}

@@ -1,0 +1,44 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
+
+# local archive, not part of the repo
+files.zip
+
+# swatch cache: only curated example outputs are committed (force-add with git add -f)
+assignment-b/cache/*
+!assignment-b/cache/.gitkeep
+# curated examples used by swatch_preview.ipynb (keyless reviewers get them as cache hits)
+# cable #5B3E96 gpt-image-2
+!assignment-b/cache/0bc1dd95334f6d5e7d69c461f4448cec38c95c588507652f76b50ee38546a1cd.*
+# rib_1x1 #5B3E96 gpt-image-1-mini
+!assignment-b/cache/135034e4806039cab26e356eb6acf68838e9d8f356f7fc2165d578b7f9e50ff9.*
+# cable #D4A017 gpt-image-1-mini
+!assignment-b/cache/240cefba12d19e8f2d708ea34f5c234fd0631b5861fbebd5a08cdcbfe2849a2e.*
+# stockinette #5B3E96 gpt-image-1-mini
+!assignment-b/cache/3d88c5e40704293c8b6a75e310f91d5bc8a44f0eb54ed5a9cc6dfba9828210fb.*
+# cable #9A9A9A gpt-image-1-mini (structure master)
+!assignment-b/cache/735bd8066d1c03c64e9fcfbaf32d8459c0ed18c450e4d120cc995b03353e1b52.*
+# cable #2E6B3F gpt-image-1-mini
+!assignment-b/cache/c0e083d4645b1b1023d0020fa9d2a0209a020b87ec4732e8bb196520d3d96b82.*
+# cable #5B3E96 gpt-image-1-mini
+!assignment-b/cache/c18d4c77b5e9ddd446bd81e390c38c5ea36986328fcba973c8f0820e557e5628.*
+
+# The brief document is not part of the repo.
+docs/brief/*.docx
+docs/brief/BRIEF.md

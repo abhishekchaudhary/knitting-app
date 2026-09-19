@@ -1,0 +1,12 @@
+# Justification for each dependency: DECISIONS.md -> Dependencies
+#
+# These are FLOORS, for readability. For a reproducible install use the exact
+# versions this repo's tests and evals were run against:
+#   pip install -r ../requirements.lock        (repo root: requirements.lock)
+# That matters most for `openai`: the code uses recent SDK parameters, and a
+# fresh resolve today picks a different major than the >= floor below implies.
+pydantic>=2.6
+PyYAML>=6.0
+python-dotenv>=1.0
+openai>=1.50
+pytest>=8.0

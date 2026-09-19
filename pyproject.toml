@@ -1,0 +1,24 @@
+# Tooling config only (no packaging). Tests run from the repo root:
+#   python -m pytest assignment-a/tests assignment-b/tests -q          # default: skips `live`
+#   python -m pytest assignment-a/tests assignment-b/tests -q -m live  # explicit: calls real providers, costs money
+
+[project]
+# Declared so a fresh clone fails fast on an old interpreter rather than with an
+# opaque pydantic import error. Nothing here is packaged or installed.
+name = "knitting-app"
+version = "0.1.0"
+description = "Knitting app proofs of concept: AI assistant (assignment-a) and AI swatch preview (assignment-b)"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+pythonpath = ["assignment-a", "assignment-b"]
+# importlib mode: both assignments have a tests/ dir; avoids module-name clashes.
+# -m "not live": a plain `pytest` must never call a paid provider. The live tests
+# also self-skip without a key, but a developer with OPENAI_API_KEY exported in
+# their shell would otherwise be billed by an ordinary test run. Run them on
+# purpose with `-m live` (a command-line -m overrides this one).
+addopts = "--import-mode=importlib -m 'not live'"
+markers = [
+  "demo: reproduces a moment shown in the video (runs offline)",
+  "live: calls a real provider and costs money; excluded by default, run with -m live",
+]

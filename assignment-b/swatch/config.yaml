@@ -1,0 +1,149 @@
+# config.yaml: every prompt fragment, preset, threshold and price used by swatch/.
+# Loaded and validated by swatch/config.py at import. Edit here, not in Python.
+# Rules: each block has `source` and `note`; anything not from a published source says `approximation: true`.
+
+version: 1
+
+# ---------------------------------------------------------------------------
+# Stitch prompt library. Stitch goes FIRST in the prompt: it is the input that must always be respected.
+# structure: brief §4.3 descriptions expanded into concrete physical detail .
+# fallback: which procedural pattern swatch/fallback.py draws for this stitch.
+# ravelry_query: keyword used for the reference-photo search (brief §4.4: a loose match is fine).
+# ---------------------------------------------------------------------------
+stitches:
+  source: "Brief §4.3 stitch reference table, expanded into concrete physical detail"
+  note: "Negative phrases ('no ridges', 'no V shapes') stop the model drifting to plain stockinette."
+  items:
+    - key: stockinette
+      aliases: [stockinette, "stocking stitch", "st st", stockinet]
+      structure: "smooth flat stockinette knit fabric made of neat stacked V-shaped stitches in tidy vertical columns, uniform texture, no ridges, no bumps"
+      fallback: vees
+      ravelry_query: stockinette
+    - key: garter
+      aliases: [garter, "garter stitch"]
+      structure: "garter stitch fabric with horizontal wavy ridges running across, alternating raised and recessed rows of purl bumps, no V shapes visible, squishy texture"
+      fallback: ridges
+      ravelry_query: garter
+    - key: rib_1x1
+      aliases: [rib, ribbing, "1x1 rib", "rib 1x1", "k1p1 rib"]
+      structure: "1x1 ribbed knit fabric with strong vertical corrugated columns: narrow raised ribs alternating with narrow recessed channels, one stitch wide, deep vertical grooves"
+      fallback: ribs_narrow
+      ravelry_query: ribbed
+    - key: rib_2x2
+      aliases: ["2x2 rib", "rib 2x2", "k2p2 rib"]
+      structure: "2x2 ribbed knit fabric with vertical corrugated columns two stitches wide: broad raised ribs alternating with recessed channels"
+      fallback: ribs_wide
+      ravelry_query: ribbed
+    - key: seed
+      aliases: [seed, moss, "seed stitch", "moss stitch"]
+      structure: "seed stitch fabric with an all-over bumpy pebbled texture, small alternating knit and purl bumps like a fine checkerboard, no directional lines"
+      fallback: checker
+      ravelry_query: seed stitch
+    - key: cable
+      aliases: [cable, cables, cabled]
+      structure: "cable knit fabric with thick twisted rope-like braids, plaited columns crossing over each other with deep shadows, raised 3D relief against a flat purl background"
+      fallback: braids
+      ravelry_query: cable
+    - key: lace
+      aliases: [lace, eyelet, openwork]
+      structure: "knitted lace fabric with a regular pattern of small round eyelet holes and thin strands between them, airy openwork, light passing through the holes"
+      fallback: eyelets
+      ravelry_query: lace
+
+# Weight changes how big and chunky the stitches look (brief §4.3: secondary input).
+weights:
+  source: "Craft Yarn Council weight categories (same keys as assignment-a/knitcalc/domain.yaml)"
+  note: "Aliases mirror domain.yaml so both assignments accept the same words."
+  items:
+    - {key: lace,        aliases: [lace, cobweb],                        clause: "made with very fine thread-like yarn, many tiny stitches"}
+    - {key: super_fine,  aliases: [super fine, fingering, sock, "4ply"], clause: "made with fine fingering yarn, many small stitches"}
+    - {key: fine,        aliases: [fine, sport],                         clause: "made with sport-weight yarn, small neat stitches"}
+    - {key: light,       aliases: [light, dk, "double knit"],            clause: "made with DK yarn, medium-small stitches"}
+    - {key: medium,      aliases: [medium, worsted, aran],               clause: "made with worsted-weight yarn, medium-sized clearly defined stitches"}
+    - {key: bulky,       aliases: [bulky, chunky],                       clause: "made with chunky yarn, large plump stitches"}
+    - {key: super_bulky, aliases: [super bulky, "super chunky", roving], clause: "made with very thick super-chunky yarn, few very large stitches"}
+    - {key: jumbo,       aliases: [jumbo],                               clause: "made with giant jumbo yarn, very few huge stitches"}
+
+# Fibre changes sheen and fuzz (brief §4.3). First keyword found in fibre_content wins.
+fibres:
+  source: "Brief §4.3 fibre notes"
+  note: "Unknown fibres get the default clause; the stitch and colour are still respected."
+  default: "soft natural yarn texture"
+  items:
+    - {keyword: mohair,  clause: "mohair yarn with a strong soft fuzzy halo softening the stitch edges"}
+    - {keyword: alpaca,  clause: "alpaca yarn with a soft fuzzy halo and slightly blurred stitch edges"}
+    - {keyword: cotton,  clause: "cotton yarn, smooth crisp matte surface, very clear stitch definition"}
+    - {keyword: silk,    clause: "silk yarn with a gentle lustrous sheen"}
+    - {keyword: acrylic, clause: "acrylic yarn, smooth with a slight synthetic sheen"}
+    - {keyword: wool,    clause: "wool yarn with visible ply twist and a slight matte fuzz"}
+
+prompt:
+  source: "internal (fixed photography suffix)"
+  note: "Colour is given three ways (hex, RGB, words) because image models follow words better than hex."
+  colour_template: "The yarn colour is exactly {hex}, RGB({r}, {g}, {b}), a {words} colour, evenly dyed, solid single colour."
+  suffix: "Top-down macro photograph of a flat 10 by 10 centimetre hand-knitted swatch filling the entire frame, even soft studio lighting, sharp focus, photorealistic, no hands, no needles, no text, no border, no other colours."
+
+# ---------------------------------------------------------------------------
+# Colour presets for the "tap a colour" demo (brief §4.2: 5 or 6 presets).
+# ---------------------------------------------------------------------------
+presets:
+  source: "Picked to span hue and lightness; royal purple is the brief's §4.2 example"
+  note: "Hex is the source of truth; names are labels only."
+  items:
+    - {name: royal purple, hex: "#5B3E96"}
+    - {name: forest green, hex: "#2E6B3F"}
+    - {name: mustard,      hex: "#D4A017"}
+    - {name: brick red,    hex: "#A23B2A"}
+    - {name: denim blue,   hex: "#3B5B8C"}
+    - {name: oatmeal,      hex: "#D8CBB0"}
+
+colour:
+  delta_e_threshold: 12
+  master_hex: "#9A9A9A"
+  measure_crop: 0.6
+  source: "CIEDE2000 (Sharma, Wu & Dalal 2005). ΔE < ~10 reads as 'the same colour' at a glance"
+  approximation: true
+  note: "Measured as the median LAB of the centre `measure_crop` (60%) crop, which avoids vignettes and shadows. The master is a mid-grey so the tint has room to go light or dark."
+  calibrate: "Look at the ΔE table in the notebook; lower the threshold if colours that read as wrong still pass."
+
+# ---------------------------------------------------------------------------
+# Image generation.
+# ---------------------------------------------------------------------------
+image:
+  default_model: gpt-image-1-mini
+  quality: low
+  size: "1024x1024"
+  store_px: 512
+  source: "OpenAI Images API docs (gpt-image-1 family: sizes 1024x1024 / 1536x1024 / 1024x1536; quality low/medium/high)"
+  note: "The cache stores a 512 px copy to keep the repo small. A real product would keep full resolution for zoom (S3 + CDN)."
+
+# ---------------------------------------------------------------------------
+# Ravelry reference photos.
+# ---------------------------------------------------------------------------
+ravelry:
+  base_url: "https://api.ravelry.com"
+  search_path: "/patterns/search.json"
+  page_size: 5
+  search_timeout_s: 5
+  photo_timeout_s: 10
+  source: "Ravelry API docs, GET /patterns/search.json (query, page_size; results include first_photo)"
+  note: "Read-only Basic Auth (DECISIONS D7). RAVELRY_TIMEOUT_S overrides search_timeout_s; an unparseable value falls back to it."
+
+# ---------------------------------------------------------------------------
+# Cost estimate (bonus). Filled in B3 from OpenAI's published pricing.
+# ---------------------------------------------------------------------------
+cost:
+  previews_per_day: 2000
+  days_per_month: 30
+  cache_hit_rate: 0.6
+  source: "Brief §4.5 volume example (2,000 previews/day). Cache hit rate is an assumption"
+  approximation: true
+  note: "Presets repeat across users, so many requests hit the cache. 60% is a placeholder until real traffic exists."
+  calibrate: "Replace with the measured cache hit rate after launch."
+  estimate_tokens: {input: 160, output: 272}   # measured on gpt-image-1-mini low 1024x1024 (notebook cell 9)
+  prices_checked: "2026-09-17"
+  price_source: "https://developers.openai.com/api/docs/pricing (Image Generation Models - Standard, USD per 1M tokens)"
+  token_prices_per_1m:
+    gpt-image-1-mini: {text_input: 2.00, image_output: 8.00}
+    gpt-image-1.5:    {text_input: 5.00, image_output: 32.00}
+    gpt-image-2:      {text_input: 5.00, image_output: 30.00}
